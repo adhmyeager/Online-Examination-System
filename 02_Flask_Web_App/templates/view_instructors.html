@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block title %}View Instructors{% endblock %}
+{% block main %}
+<h1 class="mb-4"><i class="fas fa-chalkboard-teacher"></i> All Instructors</h1>
+<div class="mb-3">
+    <a href="/manager/dashboard" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    <a href="/manager/add-instructor" class="btn btn-primary"><i class="fas fa-plus"></i> Add Instructor</a>
+    <a href="/manager/assign-instructor" class="btn btn-success"><i class="fas fa-link"></i> Assign to Course</a>
+</div>
+<div class="card"><div class="card-body">
+<div class="table-responsive">
+<table class="table table-striped">
+<thead class="table-dark">
+    <tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Salary</th><th>Courses Teaching</th><th>Status</th></tr>
+</thead>
+<tbody>
+{% for instructor in instructors %}
+<tr>
+    <td>{{ instructor.instructor_id }}</td>
+    <td><strong>{{ instructor.instructor_name }}</strong></td>
+    <td>{{ instructor.instructor_email }}</td>
+    <td>{{ instructor.instructor_phone }}</td>
+    <td>${{ instructor.salary }}</td>
+    <td><span class="badge bg-info">{{ instructor.course_count }} courses</span></td>
+    <td>{% if instructor.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-danger">Inactive</span>{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div></div>
+{% endblock %}

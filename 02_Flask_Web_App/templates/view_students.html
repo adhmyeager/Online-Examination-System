@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block title %}View Students{% endblock %}
+{% block main %}
+<h1 class="mb-4"><i class="fas fa-users"></i> All Students</h1>
+<div class="mb-3">
+    <a href="/manager/dashboard" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    <a href="/manager/add-student" class="btn btn-primary"><i class="fas fa-plus"></i> Add Student</a>
+</div>
+<div class="card"><div class="card-body">
+<div class="table-responsive">
+<table class="table table-striped">
+<thead class="table-dark">
+    <tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Intake</th><th>Branch</th><th>Track</th><th>Status</th></tr>
+</thead>
+<tbody>
+{% for student in students %}
+<tr>
+    <td>{{ student.student_id }}</td>
+    <td><strong>{{ student.student_name }}</strong></td>
+    <td>{{ student.student_email }}</td>
+    <td>{{ student.student_phone or 'N/A' }}</td>
+    <td>{{ student.intake_name }}</td>
+    <td>{{ student.branch_name }}</td>
+    <td>{{ student.track_name }}</td>
+    <td>{% if student.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-danger">Inactive</span>{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div></div>
+{% endblock %}

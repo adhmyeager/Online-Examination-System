@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block title %}Exam Results{% endblock %}
+{% block main %}
+<h1 class="mb-4"><i class="fas fa-chart-bar"></i> Exam Results</h1>
+<div class="mb-3">
+    <a href="/instructor/dashboard" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+</div>
+<div class="card mb-4 border-primary">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">{{ exam.course_name }} - {{ exam.intake_name }}</h4>
+    </div>
+    <div class="card-body">
+        <p><strong>Date:</strong> {{ exam.exam_date }}</p>
+        <p><strong>Total Degree:</strong> {{ exam.total_degree }}</p>
+    </div>
+</div>
+<div class="card"><div class="card-body">
+<div class="table-responsive">
+<table class="table table-striped">
+<thead class="table-dark">
+    <tr><th>Student</th><th>Score</th><th>Total</th><th>Percentage</th><th>Status</th></tr>
+</thead>
+<tbody>
+{% for result in results %}
+<tr>
+    <td><strong>{{ result.student_name }}</strong></td>
+    <td>{{ result.obtained_degree }}</td>
+    <td>{{ result.total_degree }}</td>
+    <td>{{ ((result.obtained_degree / result.total_degree) * 100) | round(1) }}%</td>
+    <td><span class="badge bg-{% if result.status == 'PASS' %}success{% else %}danger{% endif %}">{{ result.status }}</span></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div></div>
+{% endblock %}

@@ -1,0 +1,351 @@
+{% extends "layout.html" %}
+
+{% block title %}Manager Dashboard{% endblock %}
+
+{% block main %}
+<h1 class="mb-4">
+    <i class="fas fa-users-cog"></i> Training Manager Dashboard
+</h1>
+<p class="lead text-muted">Welcome, {{ session.person_name }}!</p>
+
+<!-- Quick Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-building"></i> Branches
+                </h5>
+                <h2>{{ stats.branches or 0 }}</h2>
+                <a href="/manager/branches" class="btn btn-sm btn-light mt-2">
+                    <i class="fas fa-eye"></i> View
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-road"></i> Tracks
+                </h5>
+                <h2>{{ stats.tracks or 0 }}</h2>
+                <a href="/manager/tracks" class="btn btn-sm btn-light mt-2">
+                    <i class="fas fa-eye"></i> View
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-user-graduate"></i> Students
+                </h5>
+                <h2>{{ stats.students or 0 }}</h2>
+                <a href="/manager/students" class="btn btn-sm btn-light mt-2">
+                    <i class="fas fa-eye"></i> View
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-chalkboard-teacher"></i> Instructors
+                </h5>
+                <h2>{{ stats.instructors or 0 }}</h2>
+                <a href="/manager/instructors" class="btn btn-sm btn-light mt-2">
+                    <i class="fas fa-eye"></i> View
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="/manager/add-student" class="btn btn-primary w-100">
+                            <i class="fas fa-user-plus"></i> Add Student
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/manager/add-instructor" class="btn btn-success w-100">
+                            <i class="fas fa-chalkboard-teacher"></i> Add Instructor
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/manager/add-intake" class="btn btn-info w-100">
+                            <i class="fas fa-calendar-plus"></i> Add Intake
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/manager/add-course" class="btn btn-warning w-100">
+                            <i class="fas fa-book-medical"></i> Add Course
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Intakes -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-alt"></i> Recent Intakes
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if intakes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Intake Name</th>
+                                    <th>Year</th>
+                                    <th>Branch</th>
+                                    <th>Track</th>
+                                    <th>Students</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for intake in intakes %}
+                                <tr>
+                                    <td><strong>{{ intake.intake_name }}</strong></td>
+                                    <td>{{ intake.intake_year }}</td>
+                                    <td>{{ intake.branch_name }}</td>
+                                    <td>{{ intake.track_name }}</td>
+                                    <td>
+                                        <span class="badge bg-info">
+                                            {{ intake.student_count }} students
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/manager/intake/{{ intake.intake_id }}"
+                                           class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                        <a href="/manager/intake/{{ intake.intake_id }}/edit"
+                                           class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> No intakes found.
+                        <a href="/manager/add-intake" class="alert-link">Create your first intake</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Overview -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line"></i> System Statistics
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Total Courses
+                        <span class="badge bg-primary rounded-pill">{{ stats.courses or 0 }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Total Exams
+                        <span class="badge bg-success rounded-pill">{{ stats.exams or 0 }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Active Students
+                        <span class="badge bg-info rounded-pill">{{ stats.active_students or 0 }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Active Instructors
+                        <span class="badge bg-warning rounded-pill">{{ stats.active_instructors or 0 }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-tasks"></i> Recent Activities
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    {% if activities %}
+                        {% for activity in activities %}
+                        <div class="activity-item mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-circle text-primary"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">{{ activity.title }}</h6>
+                                    <p class="mb-0 text-muted small">{{ activity.description }}</p>
+                                    <small class="text-muted">{{ activity.timestamp }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No recent activities</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Branch & Track Management -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-building"></i> Branches
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if branches %}
+                    <ul class="list-group">
+                        {% for branch in branches %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ branch.branch_name }}</strong>
+                                <br>
+                                <small class="text-muted">{{ branch.branch_location }}</small>
+                            </div>
+                            <div>
+                                <a href="/manager/branch/{{ branch.branch_id }}/edit"
+                                   class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="mt-3">
+                        <a href="/manager/add-branch" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Branch
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        No branches found. <a href="/manager/add-branch">Add one</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-road"></i> Tracks
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if tracks %}
+                    <ul class="list-group">
+                        {% for track in tracks %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ track.track_name }}</strong>
+                                <br>
+                                <small class="text-muted">{{ track.track_description }}</small>
+                            </div>
+                            <div>
+                                <a href="/manager/track/{{ track.track_id }}/edit"
+                                   class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="mt-3">
+                        <a href="/manager/add-track" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Add Track
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        No tracks found. <a href="/manager/add-track">Add one</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reports Section -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="fas fa-file-alt"></i> Generate Reports
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="/manager/reports/students" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="fas fa-users"></i> Student Report
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/manager/reports/exams" class="btn btn-outline-success w-100 mb-2">
+                            <i class="fas fa-file-alt"></i> Exam Report
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/manager/reports/performance" class="btn btn-outline-info w-100 mb-2">
+                            <i class="fas fa-chart-bar"></i> Performance Report
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/manager/reports/instructors" class="btn btn-outline-warning w-100 mb-2">
+                            <i class="fas fa-chalkboard-teacher"></i> Instructor Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

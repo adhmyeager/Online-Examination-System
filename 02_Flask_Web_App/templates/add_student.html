@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block title %}Add Student{% endblock %}
+{% block main %}
+<div class="row"><div class="col-md-8 mx-auto">
+<h1 class="mb-4"><i class="fas fa-user-plus"></i> Add New Student</h1>
+<a href="/manager/students" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left"></i> Back</a>
+<div class="card"><div class="card-body">
+<form method="post">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label>Username <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="username" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>Password <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" name="password" required>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Full Name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="name" required>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label>Email <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" name="email" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>Phone</label>
+            <input type="tel" class="form-control" name="phone">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Intake <span class="text-danger">*</span></label>
+        <select class="form-select" name="intake_id" required>
+            <option value="">-- Select Intake --</option>
+            {% for intake in intakes %}<option value="{{ intake.intake_id }}">{{ intake.intake_name }} ({{ intake.intake_year }})</option>{% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Add Student</button>
+</form>
+</div></div>
+</div></div>
+{% endblock %}

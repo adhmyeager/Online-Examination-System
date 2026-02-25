@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}Add Intake{% endblock %}
+{% block main %}
+<div class="row"><div class="col-md-8 mx-auto">
+<h1 class="mb-4"><i class="fas fa-calendar-plus"></i> Add New Intake</h1>
+<a href="/manager/dashboard" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left"></i> Back</a>
+<div class="card"><div class="card-body">
+<form method="post">
+    <div class="mb-3">
+        <label>Intake Name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="intake_name" placeholder="e.g., Intake 46" required>
+    </div>
+    <div class="mb-3">
+        <label>Year <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" name="intake_year" min="2020" max="2030" value="2024" required>
+    </div>
+    <div class="mb-3">
+        <label>Branch <span class="text-danger">*</span></label>
+        <select class="form-select" name="branch_id" required>
+            <option value="">-- Select Branch --</option>
+            {% for branch in branches %}<option value="{{ branch.branch_id }}">{{ branch.branch_name }}</option>{% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label>Track <span class="text-danger">*</span></label>
+        <select class="form-select" name="track_id" required>
+            <option value="">-- Select Track --</option>
+            {% for track in tracks %}<option value="{{ track.track_id }}">{{ track.track_name }}</option>{% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Add Intake</button>
+</form>
+</div></div>
+</div></div>
+{% endblock %}

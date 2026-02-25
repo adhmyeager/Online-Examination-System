@@ -1,0 +1,290 @@
+{% extends "layout.html" %}
+
+{% block title %}Grade Exam{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="col-md-12">
+        <!-- Back Button -->
+        <a href="/instructor/dashboard" class="btn btn-secondary mb-3">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        
+        <!-- Exam Info Card -->
+        <div class="card mb-4 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    <i class="fas fa-edit"></i> Grading: {{ exam.course_name }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>Exam Type:</strong> {{ exam.exam_type }}
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Date:</strong> {{ exam.exam_date }}
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Intake:</strong> {{ exam.intake_name }}
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Total Degree:</strong> {{ exam.total_degree }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter Options -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="filterStudent" class="form-label">Filter by Student:</label>
+                        <select class="form-select" id="filterStudent" onchange="filterAnswers()">
+                            <option value="">All Students</option>
+                            {% for student in students %}
+                            <option value="{{ student.student_id }}">{{ student.student_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="filterStatus" class="form-label">Filter by Status:</label>
+                        <select class="form-select" id="filterStatus" onchange="filterAnswers()">
+                            <option value="">All</option>
+                            <option value="ungraded" selected>Ungraded Only</option>
+                            <option value="graded">Graded Only</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Quick Stats:</label>
+                        <p class="mb-0">
+                            <span class="badge bg-warning">{{ ungraded_count }} Ungraded</span>
+                            <span class="badge bg-success">{{ graded_count }} Graded</span>
+                            <span class="badge bg-info">{{ total_count }} Total</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Answers to Grade -->
+        {% if answers %}
+            {% for answer in answers %}
+            <div class="card mb-3 answer-card" 
+                 data-student-id="{{ answer.student_id }}"
+                 data-graded="{{ 'true' if answer.obtained_marks is not none else 'false' }}">
+                <div class="card-header bg-light">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user"></i> {{ answer.student_name }}
+                            </h5>
+                            <small class="text-muted">
+                                Student ID: {{ answer.student_id }}
+                            </small>
+                        </div>
+                        <div class="col-auto">
+                            {% if answer.obtained_marks is not none %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check"></i> Graded: {{ answer.obtained_marks }}/{{ answer.question_degree }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning">
+                                    <i class="fas fa-clock"></i> Pending
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Question -->
+                    <div class="mb-3">
+                        <h6><i class="fas fa-question-circle"></i> Question:</h6>
+                        <p class="lead">{{ answer.question_text }}</p>
+                        <span class="badge bg-secondary">Question ID: {{ answer.question_id }}</span>
+                        <span class="badge bg-info">Max Marks: {{ answer.question_degree }}</span>
+                    </div>
+                    
+                    <!-- Model Answer -->
+                    <div class="alert alert-info mb-3">
+                        <h6><i class="fas fa-book"></i> Model Answer:</h6>
+                        <p class="mb-0">{{ answer.correct_answer }}</p>
+                    </div>
+                    
+                    <!-- Student's Answer -->
+                    <div class="alert alert-secondary mb-3">
+                        <h6><i class="fas fa-pencil-alt"></i> Student's Answer:</h6>
+                        <p class="mb-0">{{ answer.student_answer or 'No answer provided' }}</p>
+                        <small class="text-muted">
+                            Submitted at: {{ answer.answered_at }}
+                        </small>
+                    </div>
+                    
+                    <!-- Grading Form -->
+                    <form method="post" action="/instructor/grade-answer" class="grading-form">
+                        <input type="hidden" name="answer_id" value="{{ answer.answer_id }}">
+                        <input type="hidden" name="exam_id" value="{{ exam.exam_id }}">
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="marks_{{ answer.answer_id }}" class="form-label">
+                                    <strong>Award Marks (out of {{ answer.question_degree }}):</strong>
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="marks_{{ answer.answer_id }}" 
+                                       name="obtained_marks"
+                                       min="0" 
+                                       max="{{ answer.question_degree }}" 
+                                       step="0.5"
+                                       value="{{ answer.obtained_marks or '' }}"
+                                       required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="is_correct_{{ answer.answer_id }}" class="form-label">
+                                    <strong>Mark as:</strong>
+                                </label>
+                                <select class="form-select" 
+                                        id="is_correct_{{ answer.answer_id }}" 
+                                        name="is_correct">
+                                    <option value="1" {% if answer.is_correct == 1 %}selected{% endif %}>
+                                        Correct
+                                    </option>
+                                    <option value="0" {% if answer.is_correct == 0 %}selected{% endif %}>
+                                        Incorrect
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Feedback/Comments (Optional) -->
+                        <div class="mt-3">
+                            <label for="feedback_{{ answer.answer_id }}" class="form-label">
+                                Feedback/Comments (Optional):
+                            </label>
+                            <textarea class="form-control" 
+                                      id="feedback_{{ answer.answer_id }}" 
+                                      name="feedback"
+                                      rows="2"
+                                      placeholder="Add feedback for the student..."></textarea>
+                        </div>
+                        
+                        <!-- Quick Grade Buttons -->
+                        <div class="mt-3 btn-group" role="group">
+                            <button type="button" class="btn btn-success" 
+                                    onclick="setGrade({{ answer.answer_id }}, {{ answer.question_degree }}, 1)">
+                                <i class="fas fa-check"></i> Full Marks
+                            </button>
+                            <button type="button" class="btn btn-warning" 
+                                    onclick="setGrade({{ answer.answer_id }}, {{ answer.question_degree / 2 }}, 1)">
+                                <i class="fas fa-adjust"></i> Half Marks
+                            </button>
+                            <button type="button" class="btn btn-danger" 
+                                    onclick="setGrade({{ answer.answer_id }}, 0, 0)">
+                                <i class="fas fa-times"></i> Zero
+                            </button>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Grade
+                            </button>
+                            {% if loop.index < answers|length %}
+                            <button type="button" class="btn btn-secondary" onclick="nextAnswer()">
+                                <i class="fas fa-arrow-right"></i> Next Answer
+                            </button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Finish Grading Button -->
+            <div class="text-center mt-4 mb-4">
+                <form method="post" action="/instructor/finish-grading/{{ exam.exam_id }}">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-check-circle"></i> Finish Grading & Recalculate Scores
+                    </button>
+                </form>
+            </div>
+            
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> 
+                No text answers to grade for this exam, or all answers have been graded.
+            </div>
+            <a href="/instructor/dashboard" class="btn btn-primary">
+                <i class="fas fa-home"></i> Return to Dashboard
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Quick grade setting
+function setGrade(answerId, marks, isCorrect) {
+    document.getElementById('marks_' + answerId).value = marks;
+    document.getElementById('is_correct_' + answerId).value = isCorrect;
+}
+
+// Filter answers
+function filterAnswers() {
+    const studentFilter = document.getElementById('filterStudent').value;
+    const statusFilter = document.getElementById('filterStatus').value;
+    
+    document.querySelectorAll('.answer-card').forEach(card => {
+        let show = true;
+        
+        // Filter by student
+        if (studentFilter && card.getAttribute('data-student-id') !== studentFilter) {
+            show = false;
+        }
+        
+        // Filter by grading status
+        if (statusFilter === 'graded' && card.getAttribute('data-graded') !== 'true') {
+            show = false;
+        } else if (statusFilter === 'ungraded' && card.getAttribute('data-graded') === 'true') {
+            show = false;
+        }
+        
+        card.style.display = show ? 'block' : 'none';
+    });
+}
+
+// Scroll to next answer
+function nextAnswer() {
+    const currentCard = event.target.closest('.answer-card');
+    const nextCard = currentCard.nextElementSibling;
+    
+    if (nextCard && nextCard.classList.contains('answer-card')) {
+        nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// Auto-filter ungraded on page load
+window.addEventListener('load', function() {
+    filterAnswers();
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Alt + N = Next answer
+    if (e.altKey && e.key === 'n') {
+        const nextButton = document.querySelector('.btn-secondary[onclick="nextAnswer()"]');
+        if (nextButton) nextButton.click();
+    }
+    
+    // Alt + S = Save (submit first form)
+    if (e.altKey && e.key === 's') {
+        e.preventDefault();
+        document.querySelector('.grading-form').submit();
+    }
+});
+</script>
+{% endblock %}

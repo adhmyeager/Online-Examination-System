@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block title %}My Questions{% endblock %}
+{% block main %}
+<h1 class="mb-4"><i class="fas fa-list"></i> My Question Pool</h1>
+<div class="mb-3">
+    <a href="/instructor/dashboard" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    <a href="/instructor/add-question" class="btn btn-primary"><i class="fas fa-plus"></i> Add Question</a>
+</div>
+<div class="card"><div class="card-body">
+<div class="table-responsive">
+<table class="table table-striped">
+<thead class="table-dark">
+    <tr><th>ID</th><th>Question</th><th>Type</th><th>Course</th><th>Times Used</th><th>Created</th></tr>
+</thead>
+<tbody>
+{% for q in questions %}
+<tr>
+    <td>{{ q.question_id }}</td>
+    <td>{{ q.question_text[:100] }}{% if q.question_text|length > 100 %}...{% endif %}</td>
+    <td><span class="badge bg-{% if q.question_type == 'MCQ' %}primary{% elif q.question_type == 'TrueFalse' %}warning{% else %}info{% endif %}">{{ q.question_type }}</span></td>
+    <td>{{ q.course_name }}</td>
+    <td><span class="badge bg-secondary">{{ q.times_used }} times</span></td>
+    <td>{{ q.created_date }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div></div>
+{% endblock %}

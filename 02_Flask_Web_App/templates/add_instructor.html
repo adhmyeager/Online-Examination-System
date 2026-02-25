@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block title %}Add Instructor{% endblock %}
+{% block main %}
+<div class="row"><div class="col-md-8 mx-auto">
+<h1 class="mb-4"><i class="fas fa-chalkboard-teacher"></i> Add New Instructor</h1>
+<a href="/manager/instructors" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left"></i> Back</a>
+<div class="card"><div class="card-body">
+<form method="post">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label>Username <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="username" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>Password <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" name="password" required>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Full Name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="name" required>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label>Email <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" name="email" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>Phone</label>
+            <input type="tel" class="form-control" name="phone">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Salary</label>
+        <input type="number" class="form-control" name="salary" value="10000" step="100">
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Add Instructor</button>
+</form>
+</div></div>
+</div></div>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "layout.html" %}
+
+{% block title %}Register - Examination System{% endblock %}
+
+{% block main %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">
+                    <i class="fas fa-user-plus"></i> Student Registration
+                </h2>
+
+                <form method="post" action="/register">
+                    <div class="row">
+                        <!-- Username -->
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                   placeholder="Choose a username" required autofocus>
+                            <small class="text-muted">Letters and numbers only</small>
+                        </div>
+
+                        <!-- Full Name -->
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   placeholder="Your full name" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Password -->
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="password" name="password"
+                                   placeholder="Create password" required minlength="8">
+                            <small class="text-muted">At least 8 characters</small>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="col-md-6 mb-3">
+                            <label for="confirmation" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="confirmation" name="confirmation"
+                                   placeholder="Confirm password" required>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email"
+                               placeholder="your.email@example.com" required>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" name="phone"
+                               placeholder="01234567890">
+                    </div>
+
+                    <!-- Intake Selection -->
+                    <div class="mb-3">
+                        <label for="intake_id" class="form-label">Select Your Intake <span class="text-danger">*</span></label>
+                        <select class="form-select" id="intake_id" name="intake_id" required>
+                            <option value="">-- Choose Intake --</option>
+                            {% for intake in intakes %}
+                            <option value="{{ intake.intake_id }}">
+                                {{ intake.intake_name }} ({{ intake.intake_year }}) -
+                                {{ intake.track_name }} at {{ intake.branch_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">Select the intake you're enrolled in</small>
+                    </div>
+
+                    <!-- Terms -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="terms" required>
+                        <label class="form-check-label" for="terms">
+                            I agree to the terms and conditions
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus"></i> Register
+                        </button>
+                    </div>
+                </form>
+
+                <hr>
+
+                <!-- Login Link -->
+                <div class="text-center">
+                    <p class="mb-0">Already have an account?</p>
+                    <a href="/login" class="btn btn-link">Login here</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Card -->
+        <div class="card mt-3 bg-light">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-info-circle"></i> Registration Help</h6>
+                <ul class="mb-0">
+                    <li>Make sure to select the correct intake</li>
+                    <li>Use your real email for notifications</li>
+                    <li>Choose a strong password</li>
+                    <li>Contact your training manager if you need help</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Password confirmation validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    const confirmation = document.getElementById('confirmation').value;
+
+    if (password !== confirmation) {
+        e.preventDefault();
+        alert('Passwords do not match!');
+        return false;
+    }
+});
+</script>
+{% endblock %}

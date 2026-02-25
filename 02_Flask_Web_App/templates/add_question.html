@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block title %}Add Question{% endblock %}
+{% block main %}
+<div class="row"><div class="col-md-10 mx-auto">
+<h1 class="mb-4"><i class="fas fa-question-circle"></i> Add New Question</h1>
+<a href="/instructor/questions" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left"></i> Back</a>
+<div class="card"><div class="card-body">
+<form method="post" id="questionForm">
+    <div class="mb-3">
+        <label>Course <span class="text-danger">*</span></label>
+        <select class="form-select" name="course_id" required>
+            <option value="">-- Select Course --</option>
+            {% for course in courses %}<option value="{{ course.course_id }}">{{ course.course_name }}</option>{% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label>Question Type <span class="text-danger">*</span></label>
+        <select class="form-select" name="question_type" id="questionType" required onchange="toggleChoices()">
+            <option value="">-- Select Type --</option>
+            <option value="MCQ">Multiple Choice (MCQ)</option>
+            <option value="TrueFalse">True/False</option>
+            <option value="Text">Text Answer</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label>Question Text <span class="text-danger">*</span></label>
+        <textarea class="form-control" name="question_text" rows="3" required></textarea>
+    </div>
+    <div id="mcqChoices" style="display:none;">
+        <h5>Choices:</h5>
+        <div class="mb-2"><label>A.</label><input type="text" class="form-control" name="choice_A"></div>
+        <div class="mb-2"><label>B.</label><input type="text" class="form-control" name="choice_B"></div>
+        <div class="mb-2"><label>C.</label><input type="text" class="form-control" name="choice_C"></div>
+        <div class="mb-2"><label>D.</label><input type="text" class="form-control" name="choice_D"></div>
+    </div>
+    <div class="mb-3">
+        <label>Correct Answer <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="correct_answer" id="correctAnswer" required>
+        <small class="text-muted" id="answerHelp">Enter the correct answer</small>
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Add Question</button>
+</form>
+</div></div>
+</div></div>
+<script>
+function toggleChoices() {
+    const type = document.getElementById('questionType').value;
+    const mcqDiv = document.getElementById('mcqChoices');
+    const help = document.getElementById('answerHelp');
+    if (type === 'MCQ') {
+        mcqDiv.style.display = 'block';
+        help.textContent = 'Enter the letter (A, B, C, or D)';
+    } else if (type === 'TrueFalse') {
+        mcqDiv.style.display = 'none';
+        help.textContent = 'Enter: True or False';
+    } else {
+        mcqDiv.style.display = 'none';
+        help.textContent = 'Enter the model answer';
+    }
+}
+</script>
+{% endblock %}

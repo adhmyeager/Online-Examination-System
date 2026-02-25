@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block title %}Login - Examination System{% endblock %}
+
+{% block main %}
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </h2>
+
+                    <form method="post" action="/login">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required autofocus>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <div class="text-center">
+                        <p class="mb-0">Don't have an account?</p>
+                        <a href="/register" class="btn btn-link">Register as Student</a>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Default credentials for testing -->
+            <div class="card mt-3 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Test Accounts:</h6>
+                    <small class="text-muted">
+                        <strong>Admin:</strong> admin / admin123<br>
+                        <strong>Training Manager:</strong> manager1 / manager123 (Mahmoud Ouf)<br>
+                        <strong>Instructor 1:</strong> instructor1 / instructor123 (Eng. Alyaa)<br>
+                        <strong>Instructor 2:</strong> instructor2 / instructor123 (Omar Saqer)<br>
+                        <strong>Students:</strong><br>
+                        &nbsp;&nbsp;adhm / adhm123<br>
+                        &nbsp;&nbsp;hager / hager123<br>
+                        &nbsp;&nbsp;mohamedalaa / 123<br>
+                        &nbsp;&nbsp;abdo / abdo123
+                    </small>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    </div>
+{% endblock %}

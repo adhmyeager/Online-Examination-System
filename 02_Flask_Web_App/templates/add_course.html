@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block title %}Add Course{% endblock %}
+{% block main %}
+<div class="row"><div class="col-md-8 mx-auto">
+<h1 class="mb-4"><i class="fas fa-book-medical"></i> Add New Course</h1>
+<a href="/manager/dashboard" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left"></i> Back</a>
+<div class="card"><div class="card-body">
+<form method="post">
+    <div class="mb-3">
+        <label>Course Name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="course_name" placeholder="e.g., SQL Fundamentals" required>
+    </div>
+    <div class="mb-3">
+        <label>Description</label>
+        <textarea class="form-control" name="course_description" rows="3"></textarea>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label>Max Degree <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" name="max_degree" min="1" value="100" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label>Min Degree (Pass) <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" name="min_degree" min="1" value="50" required>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Add Course</button>
+</form>
+</div></div>
+</div></div>
+{% endblock %}

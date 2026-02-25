@@ -1,0 +1,181 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block main %}
+<h1 class="mb-4">
+    <i class="fas fa-user-shield"></i> System Administrator Dashboard
+</h1>
+<p class="lead text-muted">Complete system control and monitoring</p>
+
+<!-- System Statistics -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-users"></i> Total Users</h5>
+                <h2>{{ stats.total_users }}</h2>
+                <small>{{ stats.active_users }} active</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-user-graduate"></i> Students</h5>
+                <h2>{{ stats.total_students }}</h2>
+                <a href="/manager/students" class="btn btn-sm btn-light mt-2">View All</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-chalkboard-teacher"></i> Instructors</h5>
+                <h2>{{ stats.total_instructors }}</h2>
+                <a href="/manager/instructors" class="btn btn-sm btn-light mt-2">View All</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-users-cog"></i> Managers</h5>
+                <h2>{{ stats.total_managers }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-dark">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-book"></i> Courses</h5>
+                <h2>{{ stats.total_courses }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-secondary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-file-alt"></i> Exams</h5>
+                <h2>{{ stats.total_exams }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-question-circle"></i> Questions</h5>
+                <h2>{{ stats.total_questions }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-database"></i> Database</h5>
+                <small>SQLite</small><br>
+                <small>exam_system.db</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-bolt"></i> Administrator Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="/admin/users" class="btn btn-primary w-100">
+                            <i class="fas fa-users"></i> Manage Users
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/admin/logs" class="btn btn-info w-100">
+                            <i class="fas fa-file-alt"></i> View Logs
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/manager/dashboard" class="btn btn-success w-100">
+                            <i class="fas fa-cogs"></i> System Settings
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <button class="btn btn-warning w-100" onclick="alert('Backup feature coming soon!')">
+                            <i class="fas fa-database"></i> Database Backup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Users -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-user-plus"></i> Recent Users</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Created Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in recent_users %}
+                            <tr>
+                                <td><strong>{{ user.username }}</strong></td>
+                                <td>
+                                    <span class="badge bg-{% if user.role == 'admin' %}danger{% elif user.role == 'manager' %}warning{% elif user.role == 'instructor' %}info{% else %}success{% endif %}">
+                                        {{ user.role }}
+                                    </span>
+                                </td>
+                                <td>{{ user.created_date }}</td>
+                                <td>
+                                    {% if user.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/admin/users" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <a href="/admin/users" class="btn btn-primary mt-3">
+                    <i class="fas fa-users"></i> View All Users
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

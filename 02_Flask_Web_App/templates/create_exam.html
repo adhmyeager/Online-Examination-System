@@ -1,0 +1,319 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Exam{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <!-- Back Button -->
+        <a href="/instructor/dashboard" class="btn btn-secondary mb-3">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        
+        <!-- Create Exam Form -->
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    <i class="fas fa-plus-circle"></i> Create New Exam
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post" action="/instructor/create-exam" id="createExamForm">
+                    
+                    <!-- Step 1: Basic Information -->
+                    <h4 class="mb-3">
+                        <i class="fas fa-info-circle"></i> Step 1: Basic Information
+                    </h4>
+                    
+                    <div class="row">
+                        <!-- Course Selection -->
+                        <div class="col-md-6 mb-3">
+                            <label for="course_id" class="form-label">
+                                Course <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="course_id" name="course_id" required>
+                                <option value="">-- Select Course --</option>
+                                {% for course in courses %}
+                                <option value="{{ course.course_id }}" 
+                                        data-max-degree="{{ course.max_degree }}"
+                                        data-min-degree="{{ course.min_degree }}">
+                                    {{ course.course_name }} (Max: {{ course.max_degree }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Intake Selection -->
+                        <div class="col-md-6 mb-3">
+                            <label for="intake_id" class="form-label">
+                                Intake <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="intake_id" name="intake_id" required>
+                                <option value="">-- Select Intake --</option>
+                                {% for intake in intakes %}
+                                <option value="{{ intake.intake_id }}">
+                                    {{ intake.intake_name }} - {{ intake.track_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <!-- Exam Type -->
+                        <div class="col-md-4 mb-3">
+                            <label for="exam_type" class="form-label">
+                                Exam Type <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="exam_type" name="exam_type" required>
+                                <option value="Exam">Regular Exam</option>
+                                <option value="Corrective">Corrective Exam</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Year -->
+                        <div class="col-md-4 mb-3">
+                            <label for="year" class="form-label">
+                                Year <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" class="form-control" id="year" name="year" 
+                                   value="2024" min="2020" max="2030" required>
+                        </div>
+                        
+                        <!-- Total Degree -->
+                        <div class="col-md-4 mb-3">
+                            <label for="total_degree" class="form-label">
+                                Total Degree <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" class="form-control" id="total_degree" name="total_degree" 
+                                   min="1" required>
+                            <small class="text-muted" id="degreeHelp"></small>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- Step 2: Schedule -->
+                    <h4 class="mb-3">
+                        <i class="fas fa-calendar-alt"></i> Step 2: Schedule
+                    </h4>
+                    
+                    <div class="row">
+                        <!-- Exam Date -->
+                        <div class="col-md-4 mb-3">
+                            <label for="exam_date" class="form-label">
+                                Exam Date <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" class="form-control" id="exam_date" name="exam_date" required>
+                        </div>
+                        
+                        <!-- Start Time -->
+                        <div class="col-md-4 mb-3">
+                            <label for="start_time" class="form-label">
+                                Start Time <span class="text-danger">*</span>
+                            </label>
+                            <input type="time" class="form-control" id="start_time" name="start_time" required>
+                        </div>
+                        
+                        <!-- End Time -->
+                        <div class="col-md-4 mb-3">
+                            <label for="end_time" class="form-label">
+                                End Time <span class="text-danger">*</span>
+                            </label>
+                            <input type="time" class="form-control" id="end_time" name="end_time" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <!-- Total Time -->
+                        <div class="col-md-6 mb-3">
+                            <label for="total_time" class="form-label">
+                                Duration (minutes) <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" class="form-control" id="total_time" name="total_time" 
+                                   min="15" max="300" required>
+                            <small class="text-muted">Recommended: 60-120 minutes</small>
+                        </div>
+                        
+                        <!-- Allowance Options -->
+                        <div class="col-md-6 mb-3">
+                            <label for="allowance_options" class="form-label">
+                                Allowed Items (Optional)
+                            </label>
+                            <input type="text" class="form-control" id="allowance_options" 
+                                   name="allowance_options" placeholder="e.g., Calculator, Open book">
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- Step 3: Question Selection Method -->
+                    <h4 class="mb-3">
+                        <i class="fas fa-question-circle"></i> Step 3: Add Questions
+                    </h4>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Selection Method:</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="selection_method" 
+                                   id="random" value="random" checked>
+                            <label class="btn btn-outline-primary" for="random">
+                                <i class="fas fa-random"></i> Random Selection
+                            </label>
+                            
+                            <input type="radio" class="btn-check" name="selection_method" 
+                                   id="manual" value="manual">
+                            <label class="btn btn-outline-primary" for="manual">
+                                <i class="fas fa-hand-pointer"></i> Manual Selection
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Random Selection Options -->
+                    <div id="randomOptions" class="card bg-light p-3 mb-3">
+                        <h5>Specify Number of Questions</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="num_mcq" class="form-label">
+                                    Multiple Choice (MCQ)
+                                </label>
+                                <input type="number" class="form-control question-count" 
+                                       id="num_mcq" name="num_mcq" min="0" value="0">
+                                <label for="mcq_degree" class="form-label mt-2">Marks each:</label>
+                                <input type="number" class="form-control question-degree" 
+                                       id="mcq_degree" name="mcq_degree" min="1" value="2">
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="num_truefalse" class="form-label">
+                                    True/False
+                                </label>
+                                <input type="number" class="form-control question-count" 
+                                       id="num_truefalse" name="num_truefalse" min="0" value="0">
+                                <label for="tf_degree" class="form-label mt-2">Marks each:</label>
+                                <input type="number" class="form-control question-degree" 
+                                       id="tf_degree" name="tf_degree" min="1" value="1">
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="num_text" class="form-label">
+                                    Text Questions
+                                </label>
+                                <input type="number" class="form-control question-count" 
+                                       id="num_text" name="num_text" min="0" value="0">
+                                <label for="text_degree" class="form-label mt-2">Marks each:</label>
+                                <input type="number" class="form-control question-degree" 
+                                       id="text_degree" name="text_degree" min="1" value="10">
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <strong>Calculated Total:</strong> 
+                            <span id="calculatedTotal">0</span> marks
+                        </div>
+                    </div>
+                    
+                    <!-- Manual Selection Options (Hidden by default) -->
+                    <div id="manualOptions" class="card bg-light p-3 mb-3" style="display: none;">
+                        <h5>Select Questions Manually</h5>
+                        <p class="text-muted">
+                            After creating the exam, you'll be able to select specific questions 
+                            from your question pool.
+                        </p>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <!-- Submit Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-check"></i> Create Exam
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Update degree help text when course is selected
+document.getElementById('course_id').addEventListener('change', function() {
+    const selected = this.options[this.selectedIndex];
+    const maxDegree = selected.getAttribute('data-max-degree');
+    const minDegree = selected.getAttribute('data-min-degree');
+    
+    if (maxDegree) {
+        document.getElementById('degreeHelp').textContent = 
+            `Course maximum: ${maxDegree}, minimum: ${minDegree}`;
+        document.getElementById('total_degree').max = maxDegree;
+    }
+});
+
+// Toggle between random and manual selection
+document.querySelectorAll('input[name="selection_method"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        if (this.value === 'random') {
+            document.getElementById('randomOptions').style.display = 'block';
+            document.getElementById('manualOptions').style.display = 'none';
+        } else {
+            document.getElementById('randomOptions').style.display = 'none';
+            document.getElementById('manualOptions').style.display = 'block';
+        }
+    });
+});
+
+// Calculate total marks in real-time
+function calculateTotal() {
+    const mcq = parseInt(document.getElementById('num_mcq').value) || 0;
+    const mcqDegree = parseInt(document.getElementById('mcq_degree').value) || 0;
+    
+    const tf = parseInt(document.getElementById('num_truefalse').value) || 0;
+    const tfDegree = parseInt(document.getElementById('tf_degree').value) || 0;
+    
+    const text = parseInt(document.getElementById('num_text').value) || 0;
+    const textDegree = parseInt(document.getElementById('text_degree').value) || 0;
+    
+    const total = (mcq * mcqDegree) + (tf * tfDegree) + (text * textDegree);
+    document.getElementById('calculatedTotal').textContent = total;
+    
+    // Auto-fill total degree
+    document.getElementById('total_degree').value = total;
+}
+
+// Attach listeners to all question inputs
+document.querySelectorAll('.question-count, .question-degree').forEach(input => {
+    input.addEventListener('input', calculateTotal);
+});
+
+// Form validation
+document.getElementById('createExamForm').addEventListener('submit', function(e) {
+    const totalDegree = parseInt(document.getElementById('total_degree').value);
+    const courseSelect = document.getElementById('course_id');
+    const maxDegree = parseInt(courseSelect.options[courseSelect.selectedIndex].getAttribute('data-max-degree'));
+    
+    if (totalDegree > maxDegree) {
+        e.preventDefault();
+        alert(`Total degree (${totalDegree}) cannot exceed course maximum (${maxDegree})!`);
+        return false;
+    }
+    
+    const startTime = document.getElementById('start_time').value;
+    const endTime = document.getElementById('end_time').value;
+    
+    if (endTime <= startTime) {
+        e.preventDefault();
+        alert('End time must be after start time!');
+        return false;
+    }
+});
+
+// Set minimum exam date to today
+document.getElementById('exam_date').min = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}
