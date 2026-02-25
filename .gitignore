@@ -1,0 +1,11 @@
+*.ldf
+*.mdf
+*.bak
+*.log
+*.tmp
+.env
+flask_session/
+*.pyc
+__pycache__/
+*.log
+.env
